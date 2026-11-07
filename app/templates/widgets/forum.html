@@ -1,0 +1,21 @@
+{% if not posts %}
+<p class="empty">No posts.</p>
+{% else %}
+<ul class="list list-gap-14 collapsible" data-collapse-after="{{ o.collapse_after }}">
+  {% for p in posts %}
+  <li class="forum-item{% if o.show_thumbnails and p.thumbnail %} flex gap-10{% endif %}">
+    {% if o.show_thumbnails and p.thumbnail %}<img class="thumb-small" src="{{ p.thumbnail }}" alt="" loading="lazy" referrerpolicy="no-referrer">{% endif %}
+    <div class="min-width-0">
+      <a class="item-title" href="{{ p.url }}" target="_blank" rel="noreferrer">{{ p.title }}</a>
+      <div class="item-meta">
+        <span {{ p.created | relative_time }}></span>
+        <span>{{ p.score | compact_number }} points</span>
+        <a href="{{ p.comments_url }}" target="_blank" rel="noreferrer">{{ p.comments | compact_number }} comments</a>
+        {% if p.url != p.comments_url %}<span>{{ p.url | domain }}</span>{% endif %}
+        {% for t in p.tags %}<span>{{ t }}</span>{% endfor %}
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
