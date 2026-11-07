@@ -1,0 +1,19 @@
+<ul class="list list-gap-14">
+  {% for r in rows %}
+  {% set up = r.change >= 0 %}
+  <li class="market">
+    <div class="min-width-0 grow">
+      {% if r.symbol_link %}<a class="m-name" href="{{ r.symbol_link }}" target="_blank" rel="noreferrer">{{ r.name }}</a>{% else %}<span class="m-name">{{ r.name }}</span>{% endif %}
+      <span class="m-symbol">{{ r.symbol }}</span>
+    </div>
+    <a href="{{ r.chart_link }}" target="_blank" rel="noreferrer" aria-label="{{ r.name }} chart" class="{{ 'color-positive' if up else 'color-negative' }}">
+      <svg viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" points="{{ sparkline(r.closes) }}"/></svg>
+    </a>
+    <div class="m-price">
+      <div class="color-highlight">{{ r.currency }}{{ r.price_text }}</div>
+      <div class="m-change {{ 'color-positive' if up else 'color-negative' }}">{{ "+" if up }}{{ "%.2f" | format(r.change) }}%</div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% if failed %}<p class="size-h6 color-negative margin-top-10" title="{{ failed | join('; ') }}">{{ failed | length }} symbol{{ "s" if failed | length > 1 }} failed</p>{% endif %}
