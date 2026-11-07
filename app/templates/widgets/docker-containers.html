@@ -1,0 +1,19 @@
+{% set dot = {"running": "up", "starting": "warn", "paused": "warn", "unhealthy": "down"} %}
+{% if not rows %}
+<p class="empty">No containers to show.</p>
+{% else %}
+<p class="size-h6 color-subdue" style="margin:-4px 0 12px">{{ running }} of {{ total }} running</p>
+<div class="containers">
+  {% for c in rows %}
+  <div class="container-item" title="{{ c.image }} · {{ c.status }}">
+    {% if c.icon %}{{ icon(c.icon) }}{% else %}<span class="icon-placeholder" aria-hidden="true">{{ c.title[:2] }}</span>{% endif %}
+    <div class="info">
+      {% if c.url %}<a class="c-name" href="{{ c.url }}"{% if not c.same_tab %} target="_blank" rel="noreferrer"{% endif %}>{{ c.title }}</a>{% else %}<span class="c-name">{{ c.title }}</span>{% endif %}
+      <span class="c-status">{{ c.description or c.status }}</span>
+      {% if c.children %}<span class="c-children">+ {{ c.children | map(attribute="title") | join(", ") }}</span>{% endif %}
+    </div>
+    <span class="status-dot {{ dot.get(c.state, 'down') }}" title="{{ c.state }}"></span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
