@@ -1,0 +1,6 @@
+{#- Placeholder rendered with the page; HTMX swaps in the real widget on load. -#}
+<section class="widget widget-type-{{ w.type }} is-loading" id="w-{{ w.page_slug }}-{{ w.id }}"
+  hx-get="{{ base_url }}/w/{{ w.page_slug }}/{{ w.id }}" hx-trigger="load" hx-swap="outerHTML">
+  {% if not w.options.hide_header and not w.custom_header and w.title %}<header class="widget-header"><h2>{{ w.title }}</h2></header>{% endif %}
+  <div class="widget-content{% if w.frameless %} frameless{% endif %}"><div class="skeleton" aria-label="Loading"><i></i><i></i><i></i></div></div>
+</section>

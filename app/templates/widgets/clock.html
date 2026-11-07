@@ -1,0 +1,14 @@
+<div data-clock data-hour-format="{{ o.hour_format }}"{% if o.timezone %} data-main-tz="{{ o.timezone }}"{% endif %}>
+  <div class="clock-main">--:--</div>
+  <div class="clock-date">&nbsp;</div>
+  {% if o.timezones %}
+  <ul class="list list-gap-8 clock-zones">
+    {% for z in o.timezones %}
+    <li data-tz="{{ z.timezone }}">
+      <span><span class="color-highlight">{{ z.label or z.timezone.split('/')[-1].replace('_', ' ') }}</span> <span class="tz-offset size-h6 color-subdue"></span></span>
+      <span class="tz-time">--:--</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>

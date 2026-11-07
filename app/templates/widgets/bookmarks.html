@@ -1,0 +1,20 @@
+<div class="bookmarks">
+  {% for g in o.groups %}
+  <div class="bookmark-group"{% if g.color %} style="--group-color:{{ g.color | hsl }}"{% endif %}>
+    {% if g.title %}<div class="bookmark-group-title">{{ g.title }}</div>{% endif %}
+    <ul class="list">
+      {% for l in g.links %}
+      {% set same = l.same_tab if l.same_tab is not none else (g.same_tab if g.same_tab is not none else o.same_tab) %}
+      {% set no_arrow = l.hide_arrow if l.hide_arrow is not none else (g.hide_arrow if g.hide_arrow is not none else o.hide_arrow) %}
+      <li>
+        <a class="bookmark-link" href="{{ l.url }}"{% if not same %} target="_blank" rel="noreferrer"{% endif %}>
+          {{ icon(l.icon) }}
+          <span class="min-width-0"><span class="bm-title">{{ l.title }}</span>{% if l.description %}<span class="bm-desc">{{ l.description }}</span>{% endif %}</span>
+          {% if not no_arrow %}<span class="bm-arrow" aria-hidden="true">↗</span>{% endif %}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>

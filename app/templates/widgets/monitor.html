@@ -1,0 +1,23 @@
+{% if not rows %}
+<p class="empty">All {{ total }} sites are up.</p>
+{% else %}
+<ul class="list list-gap-14{% if o.style == 'compact' %} monitor-compact{% endif %}">
+  {% for r in rows %}
+  {% set href = r.site.error_url if (r.status != 'up' and r.site.error_url) else r.site.url %}
+  <li class="monitor-site">
+    {% if r.site.icon %}{{ icon(r.site.icon) }}{% endif %}
+    <div class="site-info">
+      <a class="site-title" href="{{ href }}"{% if not r.site.same_tab %} target="_blank" rel="noreferrer"{% endif %}>{{ r.site.title }}</a>
+      <div class="site-meta">
+        {% if r.status == 'up' %}
+          <span>{{ r.latency_ms }}ms</span>{% if r.code %}<span>· {{ r.code }}</span>{% endif %}
+        {% else %}
+          <span class="err" title="{{ r.error }}">{{ r.error or r.status }}</span>
+        {% endif %}
+      </div>
+    </div>
+    <span class="status-dot {{ 'up' if r.status == 'up' else 'down' }}" title="{{ r.status }}"></span>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

@@ -1,0 +1,12 @@
+<div class="group" data-group>
+  <div class="group-tabs" role="tablist">
+    {% for c in w.children %}
+    <button type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ c.title }}</button>
+    {% endfor %}
+  </div>
+  <div class="group-panels">
+    {% for shell in children %}
+    <div class="group-panel" role="tabpanel"{% if not loop.first %} hidden{% endif %}>{{ shell }}</div>
+    {% endfor %}
+  </div>
+</div>

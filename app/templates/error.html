@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Config error · Vantage</title>
+<style>:root{--bgh:240;--bgs:8%;--bgl:9%;--color-primary:hsl(43 50% 70%);--color-positive:hsl(43 50% 70%);--color-negative:hsl(0 70% 70%);--cm:1;--tsm:1;--scheme:1}</style>
+<link rel="stylesheet" href="/static/css/theme.css?v={{ asset_v }}">
+</head>
+<body>
+<main class="page width-slim">
+  <section class="widget"><header class="widget-header"><h2>Vantage can't start: config error</h2></header>
+  <div class="widget-content widget-error">
+    <p>Fix <code>{{ config_path }}</code> and save. This page reloads by itself once the config is valid.</p>
+    <ul class="list list-gap-10">{% for e in errors %}<li><code>{{ e }}</code></li>{% endfor %}</ul>
+  </div></section>
+</main>
+<script>
+setInterval(function () {
+  fetch("/healthz", { cache: "no-store" }).then(function (r) { return r.json(); })
+    .then(function (j) { if (j.config === "ok") location.reload(); }).catch(function () {});
+}, 3000);
+</script>
+</body>
+</html>

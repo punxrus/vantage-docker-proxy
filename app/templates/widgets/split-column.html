@@ -1,0 +1,3 @@
+<div class="split-columns" style="--split:{{ cols | length }}">
+  {% for col in cols %}<div>{% for shell in col %}{{ shell }}{% endfor %}</div>{% endfor %}
+</div>

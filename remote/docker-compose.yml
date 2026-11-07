@@ -1,0 +1,33 @@
+# Run this on the second host (192.168.0.10) so Vantage on .5 can show its
+# stats and containers. Copy this folder over, then: docker compose up -d
+#
+#   :27973  glance-agent  -> server-stats  (type: remote, url: http://192.168.0.10:27973)
+#   :2375   socket proxy  -> docker-containers (sock-path: tcp://192.168.0.10:2375)
+#
+# Both are read-only. Set AGENT_TOKEN in a .env file next to this one and the
+# same value as AGENT_TOKEN_10 in Vantage's .env.
+services:
+  glance-agent:
+    image: glanceapp/agent:v0.1.0
+    container_name: glance-agent
+    restart: unless-stopped
+    environment:
+      - TOKEN=${AGENT_TOKEN:?set AGENT_TOKEN in .env}
+      - MOUNTPOINTS=/host/root:Root
+    volumes:
+      - /:/host/root:ro
+    ports:
+      - "27973:27973"
+
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:v0.4.2
+    container_name: docker-proxy
+    restart: unless-stopped
+    environment:
+      - CONTAINERS=1
+      - POST=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      # LAN-only. Exposes container names/labels/status (read-only), nothing else.
+      - "2375:2375"

@@ -1,0 +1,49 @@
+# Vantage on the ZimaBoard (192.168.0.5). Serves http://192.168.0.5:8281
+#
+# Docker access goes through a read-only socket proxy instead of mounting
+# /var/run/docker.sock into Vantage (see README, "Docker socket security").
+services:
+  vantage:
+    build: .
+    image: vantage:latest
+    container_name: vantage
+    restart: unless-stopped
+    # Must be able to write ./data (disk cache, to-dos). `id -u` / `id -g` on the host.
+    user: "${PUID:-1000}:${PGID:-1000}"
+    ports:
+      - "8281:8080"
+    env_file: .env
+    environment:
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./config:/app/config        # vantage.yml (+ includes), hot-reloaded
+      - ./assets:/app/assets        # your icons / CSS, served at /assets/
+      - ./data:/app/data            # disk cache, to-do storage
+      - /proc:/host/proc:ro         # server-stats: host CPU / memory / uptime
+      # Disks to report in server-stats; list the in-container path under `mountpoints:`.
+      - /DATA:/host/data:ro
+    depends_on:
+      - docker-proxy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8080/healthz', timeout=4)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Read-only Docker API for the docker-containers widget (sock-path: tcp://docker-proxy:2375).
+  # Not published on the host; only Vantage can reach it.
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:v0.4.2
+    container_name: vantage-docker-proxy
+    restart: unless-stopped
+    environment:
+      - CONTAINERS=1
+      - POST=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  # --- Alternative: direct socket (simpler, but root-equivalent access) ---
+  # Remove docker-proxy above, add to vantage:
+  #   volumes:   - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   group_add: - "${DOCKER_GID}"      # `stat -c %g /var/run/docker.sock`
+  # and use `sock-path: /var/run/docker.sock` in the widget.

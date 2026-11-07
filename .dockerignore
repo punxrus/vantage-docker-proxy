@@ -1,0 +1,13 @@
+.git
+.venv
+**/__pycache__
+.pytest_cache
+.env
+data
+config
+assets
+tests
+docs
+reference
+remote
+*.md

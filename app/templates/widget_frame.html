@@ -1,0 +1,29 @@
+{#- Wraps every rendered widget: header, body, or the error state. -#}
+{% set o = w.options %}
+<section class="widget widget-type-{{ w.type }}{% if o.css_class %} {{ o.css_class }}{% endif %}{% if stale %} is-stale{% endif %}" id="w-{{ w.page_slug }}-{{ w.id }}" data-widget-id="{{ w.id }}"
+  {%- if w.lazy and not w.container and w.refresh_seconds %} hx-get="{{ base_url }}/w/{{ w.page_slug }}/{{ w.id }}" hx-trigger="every {{ w.refresh_seconds }}s" hx-swap="outerHTML"{% endif %}>
+  {% if not o.hide_header and not w.custom_header and w.title %}
+  <header class="widget-header">
+    {% if o.title_url %}<a href="{{ o.title_url }}" target="_blank" rel="noreferrer"><h2>{{ w.title }}</h2></a>{% else %}<h2>{{ w.title }}</h2>{% endif %}
+    {% if stale %}
+    <span class="badge badge-stale" title="Last refresh failed{% if source %} ({{ source }}){% endif %}: {{ error }}">stale · {{ fetched_at | age }}</span>
+    {% endif %}
+  </header>
+  {% endif %}
+  {% if body is not none %}
+  <div class="widget-content{% if w.frameless %} frameless{% endif %}">{{ body }}</div>
+  {% else %}
+  <div class="widget-content widget-error" role="status">
+    <div class="error-head">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2 1 21h22L12 2Zm1 15h-2v-2h2v2Zm0-4h-2V9h2v4Z"/></svg>
+      <span>Couldn't load</span>
+    </div>
+    <p class="error-msg">{{ error }}</p>
+    {% if source %}<p class="error-detail">Source: <code>{{ source }}</code></p>{% endif %}
+    {% if error_at %}<p class="error-detail">Failed at {{ error_at | format_time("%I:%M:%S %p") }}</p>{% endif %}
+    {% if w.lazy %}
+    <button class="button-small" type="button" hx-get="{{ base_url }}/w/{{ w.page_slug }}/{{ w.id }}?refresh=1" hx-target="closest .widget" hx-swap="outerHTML">Retry</button>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>

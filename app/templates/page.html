@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}{{ page.config.title or page.name }} · {{ app.branding.app_name }}{% endblock %}
+{% block content %}
+<main class="page width-{{ page.config.width }}{% if page.config.center_vertically %} center-vertically{% endif %}" data-page="{{ page.slug }}">
+  {% if head %}<div class="head-widgets">{% for h in head %}{{ h }}{% endfor %}</div>{% endif %}
+  <div class="columns" data-columns="{{ columns | length }}">
+    {% for size, shells, label in columns %}
+    <div class="column column-{{ size }}{% if loop.index0 == default_col %} mobile-active{% endif %}" data-col="{{ loop.index0 }}">
+      {% for s in shells %}{{ s }}{% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+  {% if columns | length > 1 %}
+  <nav class="mobile-columns" aria-label="Columns">
+    {% for size, shells, label in columns %}
+    <button type="button" data-col="{{ loop.index0 }}"{% if loop.index0 == default_col %} class="active"{% endif %}>{{ label }}</button>
+    {% endfor %}
+  </nav>
+  {% endif %}
+</main>
+{% endblock %}
