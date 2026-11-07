@@ -1,0 +1,25 @@
+<div class="weather-now">
+  <div>
+    <div class="weather-temp">{{ temp }}<sup>{{ unit }}</sup></div>
+    <div class="weather-desc">{{ label }}</div>
+    <div class="weather-sub">Feels {{ feels }}° · H {{ high }}° L {{ low }}°</div>
+  </div>
+  <div class="weather-icon" aria-hidden="true">{{ icon }}</div>
+</div>
+<div class="weather-hours" aria-label="Next 12 hours, every 2 hours">
+  {% for h in strip %}
+  <div class="weather-hour{% if h.now %} now{% endif %}" title="{{ h.temp }}{{ unit }}, {{ h.rain }}% rain">
+    <span class="rain">{% if h.rain >= 20 %}{{ h.rain }}%{% endif %}</span>
+    <span class="t">{{ h.temp }}°</span>
+    <span class="bar" style="height:{{ (h.bar * 0.5) | round | int }}px"></span>
+    <span>{{ h.label }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% if not o.hide_location %}
+<div class="weather-location">
+  {{ place.name }}{% if o.show_area_name and place.area %}, {{ place.area }}{% endif %}
+  · ☀ {{ sunrise | format_time("%I:%M %p") | replace(" ", "") | lower }} → {{ sunset | format_time("%I:%M %p") | replace(" ", "") | lower }}
+  {% if humidity is not none %} · {{ humidity }}% RH{% endif %}
+</div>
+{% endif %}
