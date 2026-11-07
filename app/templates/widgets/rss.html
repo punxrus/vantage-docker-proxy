@@ -1,0 +1,35 @@
+{% set cards = o.style.startswith("horizontal-cards") %}
+{% if not items %}
+<p class="empty">No items.</p>
+{% elif cards %}
+<div class="horizontal-scroll {{ 'rss-cards-2' if o.style == 'horizontal-cards-2' else 'rss-cards' }}"
+  style="{% if o.thumbnail_height %}--thumb-h:{{ o.thumbnail_height }}rem;--thumb-ar:auto;{% endif %}{% if o.card_height %}height:{{ o.card_height }}rem;{% endif %}">
+  {% for i in items %}
+  <a class="card" href="{{ i.link }}" target="_blank" rel="noreferrer">
+    {% if o.show_thumbnails and i.thumbnail %}<img class="card-thumb" src="{{ i.thumbnail }}" alt="" loading="lazy" referrerpolicy="no-referrer">{% endif %}
+    <div class="card-body">
+      <span class="item-title">{{ i.title }}</span>
+      <div class="item-meta"><span {{ i.published | relative_time }}></span>{% if i.source %}<span>{{ i.source }}</span>{% endif %}</div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<ul class="list {{ 'list-gap-14 rss-detailed' if o.style == 'detailed-list' else 'list-gap-10' }} collapsible{% if o.single_line_titles %} single-line-titles{% endif %}" data-collapse-after="{{ o.collapse_after }}">
+  {% for i in items %}
+  <li>
+    {% if o.style == "detailed-list" and o.show_thumbnails and i.thumbnail %}<img class="thumb-small" src="{{ i.thumbnail }}" alt="" loading="lazy" referrerpolicy="no-referrer">{% endif %}
+    <div class="min-width-0">
+      <a class="item-title" href="{{ i.link }}" target="_blank" rel="noreferrer">{{ i.title }}</a>
+      <div class="item-meta">
+        <span {{ i.published | relative_time }}></span>
+        {% if i.source %}<span>{{ i.source }}</span>{% else %}<span>{{ i.link | domain }}</span>{% endif %}
+        {% if o.style == "detailed-list" %}{% for c in i.categories[:3] %}<span>{{ c }}</span>{% endfor %}{% endif %}
+      </div>
+      {% if o.style == "detailed-list" and i.summary %}<p class="item-desc">{{ i.summary | strip_html(300) }}</p>{% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% if failed %}<p class="size-h6 color-negative margin-top-10" title="{{ failed | join('; ') }}">{{ failed | length }} feed{{ "s" if failed | length > 1 }} failed to load</p>{% endif %}
