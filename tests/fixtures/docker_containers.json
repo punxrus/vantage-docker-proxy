@@ -1,0 +1,11 @@
+[
+  {"Id": "a1", "Names": ["/plex"], "Image": "plexinc/pms-docker:latest", "State": "running", "Status": "Up 3 days (healthy)",
+   "Labels": {"glance.name": "Plex (glance)", "vantage.name": "Plex", "glance.icon": "si:plex", "glance.url": "http://192.168.0.5:32400/web", "glance.id": "plex", "com.docker.compose.project": "media", "SECRET_ENV_SHOULD_NOT_BE_KEPT": "x"},
+   "Mounts": [{"Source": "/DATA"}], "NetworkSettings": {}},
+  {"Id": "a2", "Names": ["/plex-tautulli"], "Image": "ghcr.io/tautulli/tautulli", "State": "running", "Status": "Up 3 days",
+   "Labels": {"glance.parent": "plex"}},
+  {"Id": "a3", "Names": ["/karakeep"], "Image": "ghcr.io/karakeep-app/karakeep:release", "State": "running", "Status": "Up 2 hours (unhealthy)",
+   "Labels": {"vantage.description": "Bookmarks"}},
+  {"Id": "a4", "Names": ["/old-thing"], "Image": "busybox", "State": "exited", "Status": "Exited (0) 5 days ago", "Labels": {}},
+  {"Id": "a5", "Names": ["/hidden-one"], "Image": "alpine", "State": "running", "Status": "Up 1 hour", "Labels": {"glance.hide": "true"}}
+]

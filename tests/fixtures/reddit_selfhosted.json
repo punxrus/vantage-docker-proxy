@@ -1,0 +1,5 @@
+{"kind": "Listing", "data": {"children": [
+  {"kind": "t3", "data": {"id": "s1", "title": "Weekly thread", "stickied": true, "permalink": "/r/selfhosted/comments/s1/", "is_self": true, "score": 5, "num_comments": 50, "created_utc": 1794000000}},
+  {"kind": "t3", "data": {"id": "p1", "title": "My new homelab", "stickied": false, "permalink": "/r/selfhosted/comments/p1/", "is_self": true, "score": 1234, "num_comments": 87, "created_utc": 1794000000, "thumbnail": "self", "link_flair_text": "Showcase"}},
+  {"kind": "t3", "data": {"id": "p2", "title": "Glance alternative", "stickied": false, "permalink": "/r/selfhosted/comments/p2/", "is_self": false, "url": "https://github.com/example/dash", "score": 300, "num_comments": 12, "created_utc": 1794003600, "thumbnail": "https://b.thumbs.redditmedia.com/x.jpg"}}
+]}}

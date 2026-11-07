@@ -1,0 +1,12 @@
+{
+  "host_info_is_available": true,
+  "boot_time": 1758747502,
+  "hostname": "host10",
+  "platform": "debian",
+  "cpu": {"load_is_available": true, "load1_percent": 6, "load15_percent": 2, "temperature_is_available": true, "temperature_c": 41},
+  "memory": {"memory_is_available": true, "total_mb": 3794, "used_mb": 115, "used_percent": 3, "swap_is_available": true, "swap_total_mb": 99, "swap_used_mb": 0, "swap_used_percent": 0},
+  "mountpoints": [
+    {"path": "/host/root", "name": "Root", "total_mb": 29689, "used_mb": 12548, "used_percent": 44},
+    {"path": "/boot", "name": "", "total_mb": 512, "used_mb": 60, "used_percent": 12}
+  ]
+}

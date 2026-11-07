@@ -1,0 +1,5 @@
+[
+  {"id": 30, "serverId": 1, "ping": 10, "jitter": 1.2, "download": 761.42, "upload": 52.71, "type": "auto", "created": "2026-11-07T20:00:00.000Z"},
+  {"id": 29, "serverId": 1, "ping": 0, "download": 0, "upload": 0, "error": "Speedtest failed", "type": "auto", "created": "2026-11-07T19:00:00.000Z"},
+  {"id": 28, "serverId": 1, "ping": 12, "download": 831.6, "upload": 52.6, "type": "auto", "created": "2026-11-07T18:00:00.000Z"}
+]
