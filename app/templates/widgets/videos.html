@@ -1,0 +1,28 @@
+{% if not videos %}
+<p class="empty">No videos.</p>
+{% elif o.style == "vertical-list" %}
+<ul class="list list-gap-14 collapsible" data-collapse-after="{{ o.collapse_after }}">
+  {% for v in videos %}
+  <li class="flex gap-10">
+    <img class="thumb-small" src="{{ v.thumbnail }}" alt="" loading="lazy" referrerpolicy="no-referrer">
+    <div class="min-width-0">
+      <a class="item-title" href="{{ v.url }}" target="_blank" rel="noreferrer">{{ v.title }}</a>
+      <div class="item-meta"><span {{ v.published | relative_time }}></span><span>{{ v.author }}</span></div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="{{ 'videos-grid' if o.style == 'grid-cards' else 'horizontal-scroll videos-cards' }}">
+  {% for v in videos %}
+  <a class="card video-card" href="{{ v.url }}" target="_blank" rel="noreferrer">
+    <img class="card-thumb" src="{{ v.thumbnail }}" alt="" loading="lazy" referrerpolicy="no-referrer">
+    <div class="card-body">
+      <span class="item-title">{{ v.title }}</span>
+      <div class="item-meta"><span {{ v.published | relative_time }}></span><span>{{ v.author }}</span></div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+{% if failed %}<p class="size-h6 color-negative margin-top-10" title="{{ failed | join('; ') }}">{{ failed | length }} channel{{ "s" if failed | length > 1 }} failed to load</p>{% endif %}
