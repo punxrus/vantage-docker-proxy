@@ -1,0 +1,28 @@
+{% set action = base_url ~ "/w/" ~ w.page_slug ~ "/" ~ w.id ~ "/action/" %}
+<form class="todo-form" hx-post="{{ action }}add" hx-target="closest .widget" hx-swap="outerHTML">
+  <input type="text" name="text" maxlength="500" placeholder="{{ o.placeholder }}" autocomplete="off" aria-label="New task">
+</form>
+{% if items %}
+<ul class="list list-gap-8">
+  {% for i in items %}
+  <li class="todo-item{% if i.done %} done{% endif %}">
+    <form hx-post="{{ action }}toggle" hx-target="closest .widget" hx-swap="outerHTML">
+      <input type="hidden" name="id" value="{{ i.id }}">
+      <button class="todo-check" type="submit" aria-label="{{ 'Mark not done' if i.done else 'Mark done' }}">{% if i.done %}<svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="m9 16.2-4.2-4.2-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>{% endif %}</button>
+    </form>
+    <span class="todo-text">{{ i.text }}</span>
+    <form hx-post="{{ action }}delete" hx-target="closest .widget" hx-swap="outerHTML">
+      <input type="hidden" name="id" value="{{ i.id }}">
+      <button class="todo-del" type="submit" aria-label="Delete">✕</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% if items | length > remaining %}
+<form hx-post="{{ action }}clear-done" hx-target="closest .widget" hx-swap="outerHTML" class="margin-top-10">
+  <button class="button-small" type="submit">Clear {{ items | length - remaining }} done</button>
+</form>
+{% endif %}
+{% else %}
+<p class="empty size-h5">Nothing to do.</p>
+{% endif %}
