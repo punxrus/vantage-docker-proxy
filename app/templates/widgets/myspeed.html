@@ -1,0 +1,27 @@
+{% if not rows %}
+<p class="empty">No speed tests yet.</p>
+{% else %}
+{% if latest %}
+<div class="flex justify-between items-baseline">
+  <div><span class="size-h1 color-highlight">{{ "%.0f" | format(latest.download) }}</span><span class="color-subdue size-h6"> ↓ Mbps</span></div>
+  <div><span class="size-h1 color-highlight">{{ "%.0f" | format(latest.upload) }}</span><span class="color-subdue size-h6"> ↑ Mbps</span></div>
+  <div><span class="size-h1 color-highlight">{{ "%.0f" | format(latest.ping) }}</span><span class="color-subdue size-h6"> ms</span></div>
+</div>
+{% if down_series | length > 1 %}
+<svg viewBox="0 0 100 30" preserveAspectRatio="none" style="width:100%;height:36px;margin-top:8px" aria-label="Download history">
+  <polyline fill="none" stroke="var(--color-primary)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" points="{{ sparkline(down_series) }}"/>
+</svg>
+{% endif %}
+{% endif %}
+<ul class="list list-gap-10 margin-top-10">
+  {% for t in rows %}
+  <li>
+    <div class="flex justify-between items-baseline">
+      <span class="color-primary" {{ t.created | relative_time }}></span>
+      {% if t.error %}<span class="color-negative size-h6">failed</span>{% else %}<span>{{ "%.1f" | format(t.download) }}↓ / {{ "%.1f" | format(t.upload) }}↑ Mbps</span>{% endif %}
+    </div>
+    <div class="color-subdue size-h6">{% if t.error %}{{ t.error }}{% else %}Ping {{ "%.0f" | format(t.ping) }}ms{% endif %}</div>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
