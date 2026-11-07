@@ -1,0 +1,17 @@
+{% set icons = {"github": "si:github", "gitlab": "si:gitlab", "dockerhub": "si:docker"} %}
+{% if not releases %}
+<p class="empty">No releases found.</p>
+{% else %}
+<ul class="list list-gap-10 collapsible" data-collapse-after="{{ o.collapse_after }}">
+  {% for r in releases %}
+  <li class="flex items-center gap-10">
+    {% if o.show_source_icon %}{{ icon(icons[r.source], "size-h6") }}{% endif %}
+    <div class="min-width-0 grow">
+      <a class="item-title" href="{{ r.url }}" target="_blank" rel="noreferrer">{{ r.name }}</a>
+      <div class="item-meta"><span class="release-version">{{ r.version }}</span><span {{ r.published | relative_time }}></span>{% if r.prerelease %}<span>pre-release</span>{% endif %}</div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% if failed %}<p class="size-h6 color-negative margin-top-10" title="{{ failed | join('; ') }}">{{ failed | length }} repo{{ "s" if failed | length > 1 }} failed</p>{% endif %}
