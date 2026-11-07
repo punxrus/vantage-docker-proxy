@@ -1,0 +1,21 @@
+# Vantage config. Pages live in config/pages/ and are pulled in with !include.
+# Secrets come from .env via ${NAME}. Saving any .yml here reloads the dashboard.
+# Check it without starting the server:  docker compose exec vantage python -m app check
+
+server:
+  timeout: 10s
+  fetch-concurrency: 16
+
+branding:
+  app-name: Vantage
+
+# No theme: block, so the stock dark theme is the default (same as your Glance).
+# Pick light or any theme below from the palette button in the nav bar.
+
+pages:
+  - !include pages/home.yml
+  - !include pages/horror.yml
+  - !include pages/family.yml
+  - !include pages/links.yml
+  - !include pages/infra.yml
+  - !include pages/local.yml

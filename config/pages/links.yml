@@ -1,0 +1,43 @@
+name: Links
+columns:
+  - size: full
+    widgets:
+      - type: bookmarks
+        groups:
+          - title: Self-Hosted
+            color: 220 30 50
+            links:
+              - title: Plex
+                url: http://192.168.0.5:32400/web/index.html
+                icon: si:plex
+              - title: Karakeep
+                url: http://192.168.0.5:14592/
+                icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/Karakeep/icon.png
+              - title: Obsidian
+                url: https://192.168.0.5:15324/
+                icon: si:obsidian
+              - title: Audiobookshelf
+                url: http://192.168.0.5:13378/
+                icon: si:audiobookshelf
+              - title: IT Tools
+                url: http://192.168.0.5:8080/
+                icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/it-tools.png
+              - title: Excalidraw
+                url: http://192.168.0.10:17638/
+                icon: si:excalidraw
+              - title: MySpeed
+                url: http://192.168.0.10:5216/
+                icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/MySpeed/icon.png
+
+          - title: Web
+            color: 100 40 50
+            links:
+              - title: Pluralsight
+                url: https://app.pluralsight.com/
+                icon: si:pluralsight
+              - title: YouTube
+                url: https://www.youtube.com/
+                icon: si:youtube
+              - title: AllRecipes
+                url: https://www.allrecipes.com/
+                icon: mdi:silverware-spoon

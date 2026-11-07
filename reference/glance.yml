@@ -1,0 +1,295 @@
+pages:
+  - name: Home
+    columns:
+      - size: small
+        widgets:
+          - type: custom-api
+            title: MySpeed
+            url: http://192.168.0.10:5216/api/speedtests?limit=3
+            headers:
+              x-password: "<redacted - see MYSPEED_PASSWORD in .env>"
+            template: |
+              <ul class="list list-gap-10">
+                {{ range .JSON.Array "" }}
+                <li>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span class="color-primary" {{ .String "created" | parseTime "rfc3339" | toRelativeTime }}></span>
+                    <span>{{ .Float "download" | printf "%.1f" }}↓ / {{ .Float "upload" | printf "%.1f" }}↑ Mbps</span>
+                  </div>
+                  <div class="color-text-subdue size-h6">Ping {{ .Float "ping" | printf "%.0f" }}ms</div>
+                </li>
+                {{ end }}
+              </ul>
+
+          - type: search
+            search-engine: google
+            autofocus: false
+            new-tab: true
+
+          - type: to-do
+            id: home-todo
+
+          - type: calendar
+            first-day-of-week: sunday
+
+          - type: custom-api
+            title: Bruins Hockey
+            url: https://api-web.nhle.com/v1/club-schedule/BOS/week/now
+            template: |
+              <ul class="list list-gap-10">
+                {{ range .JSON.Array "games" }}
+                <li>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span class="color-primary">
+                      {{ if eq (.String "homeTeam.abbrev") "BOS" }}vs {{ .String "awayTeam.abbrev" }}{{ else }}@ {{ .String "homeTeam.abbrev" }}{{ end }}
+                    </span>
+                    {{ $state := .String "gameState" }}
+                    {{ if or (eq $state "FINAL") (eq $state "OFF") }}
+                      <span>{{ .Int "awayTeam.score" }}-{{ .Int "homeTeam.score" }} Final</span>
+                    {{ else if or (eq $state "LIVE") (eq $state "CRIT") }}
+                      <span class="color-primary">{{ .Int "awayTeam.score" }}-{{ .Int "homeTeam.score" }} LIVE</span>
+                    {{ else }}
+                      <span class="color-text-subdue" {{ .String "startTimeUTC" | parseTime "RFC3339" | toRelativeTime }}></span>
+                    {{ end }}
+                  </div>
+                </li>
+                {{ end }}
+              </ul>
+
+          - type: custom-api
+            title: Midterm Elections
+            template: |
+              <div style="text-align: center; padding: 6px 0;">
+                <div class="color-primary" style="font-size: 1.3em; font-weight: 600;" {{ "2026-11-03" | parseTime "DateOnly" | toRelativeTime }}></div>
+                <div class="color-text-subdue size-h6">until the 2026 Midterm Elections</div>
+              </div>
+
+          - type: rss
+            title: Tech
+            limit: 10
+            collapse-after: 3
+            cache: 3h
+            feeds:
+              - url: https://www.wired.com/feed/category/science/latest/rss
+                title: Wired Science
+                limit: 4
+              - url: https://boingboing.net/feed
+                title: Boing Boing
+                limit: 4
+              - url: https://www.geeky-gadgets.com/feed/
+                title: Geeky Gadgets
+                limit: 4
+
+      - size: full
+        widgets:
+          - type: hacker-news
+
+          - type: videos
+            channels:
+              - UCXJ4jKAvMMg56WGhqrZHFgw # Techdox
+              - UChqUTb7kYRX8-EiaN3XFrSQ # Reuters
+              - UCNye-wNBqNL5ZzHSJj3l8Bg # Al Jazeera English
+
+          - type: rss
+            title: News
+            limit: 8
+            collapse-after: 3
+            cache: 3h
+            feeds:
+              - url: https://www.huffpost.com/section/world-news/feed
+                title: HuffPost World
+                limit: 5
+              - url: https://www.cnbc.com/id/100003114/device/rss/rss.html
+                title: CNBC
+                limit: 5
+
+          - type: rss
+            title: Food Wishes
+            limit: 8
+            collapse-after: 3
+            cache: 6h
+            feeds:
+              - url: http://feeds.feedburner.com/blogspot/sBff
+                title: Food Wishes
+
+      - size: small
+        widgets:
+          - type: weather
+            location: Allyn, United States
+            units: imperial
+
+          - type: markets
+            markets:
+              - symbol: GC=F
+                name: Gold
+              - symbol: SI=F
+                name: Silver
+              - symbol: EURUSD=X
+                name: EUR/USD
+              - symbol: USDCNY=X
+                name: USD/CNY
+
+          - type: monitor
+            title: Services
+            sites:
+              - title: Plex
+                url: http://192.168.0.5:32400/web/index.html
+                check-url: http://192.168.0.5:32400/identity
+                icon: si:plex
+              - title: Karakeep
+                url: http://192.168.0.5:14592
+                icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/Karakeep/icon.png
+              - title: Audiobookshelf
+                url: http://192.168.0.5:13378
+                icon: si:audiobookshelf
+              - title: Obsidian
+                url: https://192.168.0.5:15324
+                icon: si:obsidian
+                allow-insecure: true
+
+  - name: Horror
+    columns:
+      - size: full
+        widgets:
+          - type: videos
+            title: Horror Movie Trailers
+            channels:
+              - UCY9k2Cesds_dF_ekz5c-gmQ # Bloody Disgusting Horror
+              - UCd1cLnwL83Xh-zAq5yGc7qw # Dread Central
+
+          - type: rss
+            title: Blumhouse
+            limit: 10
+            collapse-after: 4
+            cache: 3h
+            feeds:
+              - url: https://bloody-disgusting.com/tag/blumhouse/feed/
+                title: Bloody Disgusting - Blumhouse
+                headers:
+                  User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+
+          - type: rss
+            title: A24 Horror
+            limit: 10
+            collapse-after: 4
+            cache: 3h
+            feeds:
+              - url: https://bloody-disgusting.com/tag/a24/feed/
+                title: Bloody Disgusting - A24
+                headers:
+                  User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+
+          - type: rss
+            title: Horror News
+            limit: 15
+            collapse-after: 4
+            cache: 1h
+            feeds:
+              - url: https://bloody-disgusting.com/feed/
+                headers:
+                  User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+                title: Bloody Disgusting
+                limit: 8
+              - url: https://www.dreadcentral.com/feed/
+                title: Dread Central
+                limit: 8
+
+  - name: Family
+    columns:
+      - size: full
+        widgets:
+          - type: iframe
+            source: https://calendar.google.com/calendar/embed?height=650&wkst=1&ctz=America%2FLos_Angeles&showPrint=0&showTabs=0&showCalendars=0&showTz=0&mode=MONTH&src=${FAMILY_CALENDAR_ID}%40group.calendar.google.com&color=%23039BE5
+            height: 650
+
+  - name: Links
+    columns:
+      - size: full
+        widgets:
+          - type: bookmarks
+            groups:
+              - title: Self-Hosted
+                color: 220 30 50
+                links:
+                  - title: Plex
+                    url: http://192.168.0.5:32400/web/index.html
+                    icon: si:plex
+                  - title: Karakeep
+                    url: http://192.168.0.5:14592/
+                    icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/Karakeep/icon.png
+                  - title: Obsidian
+                    url: https://192.168.0.5:15324/
+                    icon: si:obsidian
+                  - title: Audiobookshelf
+                    url: http://192.168.0.5:13378/
+                    icon: si:audiobookshelf
+                  - title: IT Tools
+                    url: http://192.168.0.5:8080/
+                    icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/it-tools.png
+                  - title: Excalidraw
+                    url: http://192.168.0.10:17638/
+                    icon: si:excalidraw
+                  - title: MySpeed
+                    url: http://192.168.0.10:5216/
+                    icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/MySpeed/icon.png
+
+              - title: Web
+                color: 100 40 50
+                links:
+                  - title: Pluralsight
+                    url: https://app.pluralsight.com/
+                    icon: si:pluralsight
+                  - title: YouTube
+                    url: https://www.youtube.com/
+                    icon: si:youtube
+                  - title: AllRecipes
+                    url: https://www.allrecipes.com/
+                    icon: mdi:silverware-spoon
+
+  - name: Infra
+    columns:
+      - size: full
+        widgets:
+          - type: server-stats
+            servers:
+              - type: remote
+                name: Host .5 (ZimaOS)
+                url: http://192.168.0.5:8080
+              - type: remote
+                name: Host .10
+                url: http://192.168.0.10:8080
+
+          - type: docker-containers
+            title: Docker — .5
+            sock-path: tcp://192.168.0.5:2375
+            hide-by-default: false
+
+          - type: docker-containers
+            title: Docker — .10
+            sock-path: tcp://192.168.0.10:2375
+            hide-by-default: false
+
+  - name: Local
+    columns:
+      - size: full
+        widgets:
+          - type: custom-api
+            title: Tides — Allyn, WA
+            cache: 1h
+            url: https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=glance_dashboard&begin_date=today&range=48&datum=MLLW&station=9446281&time_zone=lst_ldt&units=english&interval=hilo&format=json
+            template: |
+              <ul class="list list-gap-10">
+                {{ range .JSON.Array "predictions" }}
+                <li>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span class="color-primary">{{ if eq (.String "type") "H" }}High Tide{{ else }}Low Tide{{ end }} — {{ .Float "v" | printf "%.1f" }} ft</span>
+                    <span class="color-text-subdue" {{ .String "t" | parseTime "2006-01-02 15:04" | toRelativeTime }}></span>
+                  </div>
+                </li>
+                {{ end }}
+              </ul>
+
+          - type: iframe
+            title: Bremerton → Seattle Ferry Schedule
+            source: https://www.wsdot.wa.gov/ferries/schedule/ScheduleDetail.aspx?arrivingterm=7&departingterm=4
+            height: 700

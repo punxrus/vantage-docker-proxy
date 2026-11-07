@@ -1,0 +1,45 @@
+name: Local
+columns:
+  - size: full
+    widgets:
+      - type: custom-api
+        title: Tides — Allyn, WA
+        title-url: https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=9446281
+        cache: 1h
+        # Glance sent begin_date=today, which NOAA rejects. Vantage renders the
+        # real date at fetch time.
+        url: https://api.tidesandcurrents.noaa.gov/api/prod/datagetter
+        parameters:
+          product: predictions
+          application: vantage_dashboard
+          begin_date: "{{ now().strftime('%Y%m%d') }}"
+          range: 48
+          datum: MLLW
+          station: 9446281
+          time_zone: lst_ldt
+          units: english
+          interval: hilo
+          format: json
+        template: |
+          {% if json.error %}
+          <p class="color-negative">NOAA: {{ json.error.message }}</p>
+          {% else %}
+          <ul class="list list-gap-10">
+            {% for p in json.predictions if (p.t | parse_time("%Y-%m-%d %H:%M") | epoch) > now().timestamp() - 3600 %}
+            <li>
+              <div class="flex justify-between items-baseline">
+                <span class="color-primary">{{ "High Tide" if p.type == "H" else "Low Tide" }} — {{ "%.1f" | format(p.v | float) }} ft</span>
+                <span class="color-text-subdue">
+                  <span {{ p.t | parse_time("%Y-%m-%d %H:%M") | relative_time }}></span>
+                  · {{ p.t | parse_time("%Y-%m-%d %H:%M") | format_time("%a %I:%M %p") }}
+                </span>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+
+      - type: iframe
+        title: Bremerton → Seattle Ferry Schedule
+        source: https://wsdot.com/ferries/schedule/ScheduleDetail.aspx?arrivingterm=7&departingterm=4
+        height: 700

@@ -1,0 +1,146 @@
+name: Home
+columns:
+  - size: small
+    widgets:
+      # Was a custom-api with the password in plain text; now the myspeed widget.
+      - type: myspeed
+        url: http://192.168.0.10:5216
+        password: ${MYSPEED_PASSWORD}
+        limit: 3
+
+      - type: search
+        search-engine: google
+        autofocus: false
+        new-tab: true
+
+      - type: todo
+        id: home-todo
+
+      - type: calendar
+        first-day-of-week: sunday
+
+      - type: custom-api
+        title: Bruins Hockey
+        title-url: https://www.nhl.com/bruins/schedule
+        url: https://api-web.nhle.com/v1/club-schedule/BOS/week/now
+        cache: 15m
+        template: |
+          <ul class="list list-gap-10">
+            {% for g in json.games %}
+            {% set home = g.homeTeam.abbrev == "BOS" %}
+            <li>
+              <div class="flex justify-between items-baseline">
+                <span class="color-primary">{{ "vs " ~ g.awayTeam.abbrev if home else "@ " ~ g.homeTeam.abbrev }}</span>
+                {% if g.gameState in ["FINAL", "OFF"] %}
+                  <span>{{ g.awayTeam.score }}-{{ g.homeTeam.score }} Final</span>
+                {% elif g.gameState in ["LIVE", "CRIT"] %}
+                  <span class="color-primary">{{ g.awayTeam.score }}-{{ g.homeTeam.score }} LIVE</span>
+                {% else %}
+                  <span class="color-text-subdue" {{ g.startTimeUTC | relative_time }}></span>
+                {% endif %}
+              </div>
+              {% if g.gameState not in ["FINAL", "OFF", "LIVE", "CRIT"] %}
+              <div class="size-h6 color-subdue">{{ g.startTimeUTC | format_time("%a %b %d, %I:%M %p") }}</div>
+              {% endif %}
+            </li>
+            {% else %}
+            <li class="color-subdue">No games this week.</li>
+            {% endfor %}
+          </ul>
+
+      - type: rss
+        title: Tech
+        limit: 10
+        collapse-after: 3
+        cache: 3h
+        feeds:
+          - url: https://www.wired.com/feed/category/science/latest/rss
+            title: Wired Science
+            limit: 4
+          - url: https://boingboing.net/feed
+            title: Boing Boing
+            limit: 4
+          - url: https://www.geeky-gadgets.com/feed/
+            title: Geeky Gadgets
+            limit: 4
+
+  - size: full
+    widgets:
+      - type: hacker-news
+
+      - type: videos
+        channels:
+          - UCXJ4jKAvMMg56WGhqrZHFgw # Techdox
+          - UChqUTb7kYRX8-EiaN3XFrSQ # Reuters
+          - UCNye-wNBqNL5ZzHSJj3l8Bg # Al Jazeera English
+
+      - type: rss
+        title: News
+        limit: 8
+        collapse-after: 3
+        cache: 3h
+        feeds:
+          - url: https://www.huffpost.com/section/world-news/feed
+            title: HuffPost World
+            limit: 5
+          - url: https://www.cnbc.com/id/100003114/device/rss/rss.html
+            title: CNBC
+            limit: 5
+
+      - type: rss
+        title: Food Wishes
+        limit: 8
+        collapse-after: 3
+        cache: 6h
+        feeds:
+          - url: http://feeds.feedburner.com/blogspot/sBff
+            title: Food Wishes
+
+  - size: small
+    widgets:
+      - type: weather
+        location: Allyn, United States
+        units: imperial
+
+      - type: markets
+        markets:
+          - symbol: GC=F
+            name: Gold
+          - symbol: SI=F
+            name: Silver
+          - symbol: EURUSD=X
+            name: EUR/USD
+          - symbol: USDCNY=X
+            name: USD/CNY
+
+      - type: monitor
+        title: Services
+        refresh: 1m
+        sites:
+          - title: Plex
+            url: http://192.168.0.5:32400/web/index.html
+            check-url: http://192.168.0.5:32400/identity
+            icon: si:plex
+          - title: Karakeep
+            url: http://192.168.0.5:14592
+            icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/Karakeep/icon.png
+          - title: Audiobookshelf
+            url: http://192.168.0.5:13378
+            icon: si:audiobookshelf
+          - title: Obsidian
+            url: https://192.168.0.5:15324
+            icon: si:obsidian
+            allow-insecure: true
+          # Added in Vantage:
+          - title: Home Assistant
+            url: http://192.168.0.5:8123
+            icon: si:homeassistant
+          - title: IT Tools
+            url: http://192.168.0.5:8080
+            icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/it-tools.png
+          - title: Excalidraw
+            url: http://192.168.0.10:17638
+            icon: si:excalidraw
+          - title: MySpeed
+            url: http://192.168.0.10:5216
+            icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/MySpeed/icon.png

@@ -1,0 +1,35 @@
+name: Infra
+columns:
+  - size: full
+    widgets:
+      - type: server-stats
+        refresh: 30s
+        servers:
+          # Vantage runs on .5, so it reads the host's /proc directly.
+          - type: local
+            name: Host .5 (ZimaOS)
+            mountpoints:
+              "/":
+                name: System
+              /host/data:
+                name: DATA
+          # Needs glance-agent on .10 (remote/docker-compose.yml). Glance had :8080,
+          # which is IT Tools; the agent listens on 27973.
+          - type: remote
+            name: Host .10
+            url: http://192.168.0.10:27973
+            token: ${AGENT_TOKEN_10}
+
+      - type: docker-containers
+        title: Docker — .5
+        # The read-only socket proxy from docker-compose.yml
+        sock-path: tcp://docker-proxy:2375
+        hide-by-default: false
+        refresh: 1m
+
+      - type: docker-containers
+        title: Docker — .10
+        # The read-only socket proxy from remote/docker-compose.yml
+        sock-path: tcp://192.168.0.10:2375
+        hide-by-default: false
+        refresh: 1m

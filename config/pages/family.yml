@@ -1,0 +1,8 @@
+name: Family
+columns:
+  - size: full
+    widgets:
+      - type: iframe
+        title: Family Calendar
+        source: https://calendar.google.com/calendar/embed?height=650&wkst=1&ctz=America%2FLos_Angeles&showPrint=0&showTabs=0&showCalendars=0&showTz=0&mode=MONTH&src=${FAMILY_CALENDAR_ID}%40group.calendar.google.com&color=%23039BE5
+        height: 650

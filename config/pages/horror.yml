@@ -1,0 +1,44 @@
+name: Horror
+columns:
+  - size: full
+    widgets:
+      - type: videos
+        title: Horror Movie Trailers
+        channels:
+          - UCY9k2Cesds_dF_ekz5c-gmQ # Bloody Disgusting Horror
+          - UCd1cLnwL83Xh-zAq5yGc7qw # Dread Central
+
+      - type: rss
+        title: Blumhouse
+        limit: 10
+        collapse-after: 4
+        cache: 3h
+        feeds:
+          - url: https://bloody-disgusting.com/tag/blumhouse/feed/
+            title: Bloody Disgusting - Blumhouse
+            headers: &browser
+              User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+
+      - type: rss
+        title: A24 Horror
+        limit: 10
+        collapse-after: 4
+        cache: 3h
+        feeds:
+          - url: https://bloody-disgusting.com/tag/a24/feed/
+            title: Bloody Disgusting - A24
+            headers: *browser
+
+      - type: rss
+        title: Horror News
+        limit: 15
+        collapse-after: 4
+        cache: 1h
+        feeds:
+          - url: https://bloody-disgusting.com/feed/
+            title: Bloody Disgusting
+            limit: 8
+            headers: *browser
+          - url: https://www.dreadcentral.com/feed/
+            title: Dread Central
+            limit: 8
