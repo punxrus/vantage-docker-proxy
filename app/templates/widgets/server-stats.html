@@ -1,0 +1,37 @@
+{% macro bar(label, pct, value, title="") %}
+<div class="stat" title="{{ title }}">
+  <div class="stat-row"><span>{{ label }}</span><span class="v">{{ value }}</span></div>
+  <div class="progress{% if pct >= 85 %} high{% endif %}"><i style="width:{{ [pct, 100] | min }}%"></i></div>
+</div>
+{% endmacro %}
+{% macro gb(mb) %}{{ "%.1f" | format(mb / 1024) if mb < 1024 * 100 else "%.0f" | format(mb / 1024) }} GB{% endmacro %}
+<div class="servers">
+  {% for s in servers %}
+  <div class="server">
+    <div class="server-head">
+      <span class="status-dot {{ 'up' if s.ok else 'down' }}"></span>
+      <div class="min-width-0">
+        <div class="server-name text-truncate">{{ s.name }}</div>
+        {% if s.ok %}
+        <div class="server-sub">
+          {% if s.uptime_s %}up {{ (s.uptime_s / 86400) | int }}d {{ ((s.uptime_s % 86400) / 3600) | int }}h{% endif %}
+          {% if s.info.cpu.temperature_is_available %} · {{ s.info.cpu.temperature_c }}°C{% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% if not s.ok %}
+    <p class="size-h5 color-negative">{{ s.error }}</p>
+    {% if s.source %}<p class="size-h6 color-subdue">{{ s.source }}</p>{% endif %}
+    {% else %}
+      {% set cpu = s.info.cpu %}{% set mem = s.info.memory %}
+      {% if cpu.load_is_available %}{{ bar("CPU", cpu.load1_percent, cpu.load1_percent ~ "%", "1m load " ~ cpu.load1_percent ~ "%, 15m " ~ cpu.load15_percent ~ "%") }}{% endif %}
+      {% if mem.memory_is_available %}{{ bar("RAM", mem.used_percent, gb(mem.used_mb) ~ " / " ~ gb(mem.total_mb)) }}{% endif %}
+      {% if mem.swap_is_available and not s.hide_swap and mem.swap_total_mb %}{{ bar("Swap", mem.swap_used_percent, gb(mem.swap_used_mb) ~ " / " ~ gb(mem.swap_total_mb)) }}{% endif %}
+      {% for d in s.info.mountpoints or [] %}
+      {{ bar(d.name or d.path, d.used_percent, gb(d.used_mb) ~ " / " ~ gb(d.total_mb), d.path) }}
+      {% endfor %}
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
