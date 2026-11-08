@@ -1,15 +1,25 @@
-# Vantage as a Portainer stack (Stacks -> Add stack -> Web editor).
+# Vantage as a Portainer stack, built from this Git repository.
 #
-# Portainer's web editor can't build images or resolve ./relative paths, so:
-#   1. Copy this repo to /DATA/AppData/vantage on the ZimaBoard.
-#   2. Build once:  docker build -t vantage:latest /DATA/AppData/vantage
-#      (or Portainer: Images -> Build a new image -> Upload a .tar of the repo)
-#   3. sudo chown -R 1000:1000 /DATA/AppData/vantage/data
-#   4. Paste this file, and set MYSPEED_PASSWORD, AGENT_TOKEN_10 and GITHUB_TOKEN
-#      under "Environment variables" below the editor.
+# Portainer: Stacks -> Add stack -> Repository
+#   Repository URL:  https://github.com/punxrus/vantage-docker-proxy
+#   Reference:       refs/heads/master
+#   Compose path:    docker-compose.portainer.yml
+#   Environment variables: MYSPEED_PASSWORD, AGENT_TOKEN_10, FAMILY_CALENDAR_ID,
+#                          GITHUB_TOKEN (optional)
+#
+# The image has no config inside it. Vantage reads it from the host, so first,
+# over SSH on the ZimaBoard:
+#   git clone https://github.com/punxrus/vantage-docker-proxy /DATA/AppData/vantage
+#   sudo chown -R 1000:1000 /DATA/AppData/vantage/data
+#
+# Using the Web editor instead? Build first
+# (docker build -t vantage:latest /DATA/AppData/vantage), delete the `build:` line
+# below and change `pull_policy` to `never`.
 services:
   vantage:
+    build: .
     image: vantage:latest
+    pull_policy: build     # never look for vantage:latest on Docker Hub
     container_name: vantage
     restart: unless-stopped
     user: "1000:1000"
@@ -20,6 +30,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - MYSPEED_PASSWORD=${MYSPEED_PASSWORD}
       - AGENT_TOKEN_10=${AGENT_TOKEN_10}
+      - FAMILY_CALENDAR_ID=${FAMILY_CALENDAR_ID}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
     volumes:
       - /DATA/AppData/vantage/config:/app/config

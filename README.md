@@ -41,14 +41,22 @@ Running the stack with `docker compose up -d` over SSH is the simpler option. Zi
 
 ### Deploying with Portainer
 
-Portainer's web editor can't run `build:`, read `.env`, or resolve `./` paths, so use [`docker-compose.portainer.yml`](docker-compose.portainer.yml) instead:
+Use [`docker-compose.portainer.yml`](docker-compose.portainer.yml). Portainer builds the image from this repo, so nothing is pulled from Docker Hub. Vantage isn't published there, and pulling `vantage:latest` fails with "pull access denied".
 
-1. Copy the repo to `/DATA/AppData/vantage`.
-2. Build the image once: `docker build -t vantage:latest /DATA/AppData/vantage` over SSH, or in Portainer under **Images → Build a new image → Upload** with a `.tar` of the repo.
-3. Run `sudo chown -R 1000:1000 /DATA/AppData/vantage/data`.
-4. **Stacks → Add stack → Web editor**: paste the file. Under **Environment variables**, set `MYSPEED_PASSWORD`, `AGENT_TOKEN_10` and `GITHUB_TOKEN`. Deploy.
+1. Over SSH on the ZimaBoard, put the config on the host and make `data` writable:
+   ```bash
+   git clone https://github.com/punxrus/vantage-docker-proxy /DATA/AppData/vantage
+   sudo chown -R 1000:1000 /DATA/AppData/vantage/data
+   ```
+2. **Stacks → Add stack → Repository**:
+   - Repository URL: `https://github.com/punxrus/vantage-docker-proxy`
+   - Reference: `refs/heads/master`
+   - Compose path: `docker-compose.portainer.yml`
+3. Under **Environment variables**, set `MYSPEED_PASSWORD`, `AGENT_TOKEN_10` and `FAMILY_CALENDAR_ID`, plus `GITHUB_TOKEN` if you want it. Deploy.
 
-Config edits hot-reload. After changing code, rebuild the image and recreate the stack. On `.10`, `remote/docker-compose.yml` works in Portainer as-is.
+Config edits under `/DATA/AppData/vantage/config` hot-reload. To pick up code changes, use **Pull and redeploy** on the stack. On `.10`, `remote/docker-compose.yml` works in Portainer as-is.
+
+With the **Web editor** instead, build first (`docker build -t vantage:latest /DATA/AppData/vantage`), delete the `build:` line, and set `pull_policy: never`.
 
 ## Your pages
 
