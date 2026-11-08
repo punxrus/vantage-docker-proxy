@@ -1,0 +1,42 @@
+# Vantage as a Portainer stack (Stacks -> Add stack -> Web editor).
+#
+# Portainer's web editor can't build images or resolve ./relative paths, so:
+#   1. Copy this repo to /DATA/AppData/vantage on the ZimaBoard.
+#   2. Build once:  docker build -t vantage:latest /DATA/AppData/vantage
+#      (or Portainer: Images -> Build a new image -> Upload a .tar of the repo)
+#   3. sudo chown -R 1000:1000 /DATA/AppData/vantage/data
+#   4. Paste this file, and set MYSPEED_PASSWORD, AGENT_TOKEN_10 and GITHUB_TOKEN
+#      under "Environment variables" below the editor.
+services:
+  vantage:
+    image: vantage:latest
+    container_name: vantage
+    restart: unless-stopped
+    user: "1000:1000"
+    ports:
+      - "8281:8080"
+    environment:
+      - TZ=America/Los_Angeles
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - MYSPEED_PASSWORD=${MYSPEED_PASSWORD}
+      - AGENT_TOKEN_10=${AGENT_TOKEN_10}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - /DATA/AppData/vantage/config:/app/config
+      - /DATA/AppData/vantage/assets:/app/assets
+      - /DATA/AppData/vantage/data:/app/data
+      - /proc:/host/proc:ro
+      - /DATA:/host/data:ro
+    depends_on:
+      - docker-proxy
+
+  # Read-only Docker API for the docker-containers widget (tcp://docker-proxy:2375).
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:v0.4.2
+    container_name: vantage-docker-proxy
+    restart: unless-stopped
+    environment:
+      - CONTAINERS=1
+      - POST=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro

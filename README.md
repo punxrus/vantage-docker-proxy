@@ -39,6 +39,17 @@ ZimaOS can import a compose file: **App Store → Custom install → Import → 
 
 Running the stack with `docker compose up -d` over SSH is the simpler option. ZimaOS still lists the containers.
 
+### Deploying with Portainer
+
+Portainer's web editor can't run `build:`, read `.env`, or resolve `./` paths, so use [`docker-compose.portainer.yml`](docker-compose.portainer.yml) instead:
+
+1. Copy the repo to `/DATA/AppData/vantage`.
+2. Build the image once: `docker build -t vantage:latest /DATA/AppData/vantage` over SSH, or in Portainer under **Images → Build a new image → Upload** with a `.tar` of the repo.
+3. Run `sudo chown -R 1000:1000 /DATA/AppData/vantage/data`.
+4. **Stacks → Add stack → Web editor**: paste the file. Under **Environment variables**, set `MYSPEED_PASSWORD`, `AGENT_TOKEN_10` and `GITHUB_TOKEN`. Deploy.
+
+Config edits hot-reload. After changing code, rebuild the image and recreate the stack. On `.10`, `remote/docker-compose.yml` works in Portainer as-is.
+
 ## Your pages
 
 `config/vantage.yml` includes one file per page from `config/pages/`: **Home, Horror, Family, Links, Infra, Local**, in the same order and layout as your Glance. [`reference/vantage.yml`](reference/vantage.yml) is the same config as a single file (`python -m app flatten`).
